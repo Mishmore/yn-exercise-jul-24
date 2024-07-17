@@ -14,7 +14,9 @@ import {
     styled,
 } from '@mui/material'
 import React from 'react'
+import { Link } from 'react-router-dom'
 
+import { APP_ROUTES } from '../domain/routes'
 import { useAnswersStore } from '../state'
 
 // TASK 4:
@@ -63,9 +65,11 @@ export const TableView: React.FC = () => {
     return (
         <TableViewWrapper id="table-view">
             <Box sx={buttonsMenuStyles}>
-                <IconButton aria-label="edit">
-                    <EditIcon />
-                </IconButton>
+                <Link to={APP_ROUTES.FORM}>
+                    <IconButton aria-label="edit">
+                        <EditIcon />
+                    </IconButton>
+                </Link>
                 <IconButton aria-label="delete">
                     <DeleteIcon />
                 </IconButton>
