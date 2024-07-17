@@ -1,16 +1,47 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Box, Button, TextField } from '@mui/material'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import { useUpdateAnswers } from '../api-hooks/useUpdateAnswers'
 import { CheckboxGroup } from '../components'
+import { DomainOption } from '../domain/types'
 import { useAnswersStore } from '../state'
 
 import { validationSchema } from './Form.config'
 
+type InterestId = {
+    id: string
+}
+
+type InterestAttrs = {
+    label: string
+    checked: boolean
+}
+
+type InterestsOptionsProps = InterestId & InterestAttrs
+
+const optionsToApiConverter = (
+    arr: Array<InterestsOptionsProps>,
+): Array<DomainOption> =>
+    arr.map(elm => ({
+        [elm.id]: { label: elm.label, isChecked: !!elm.checked },
+    }))
+
+const apiToOptionsConverter = (
+    arr: Array<DomainOption>,
+): Array<InterestsOptionsProps> =>
+    arr.map(elm => ({
+        id: Object.keys(elm)[0],
+        label: Object.values(elm)[0]?.label,
+        checked: Object.values(elm)[0]?.isChecked,
+    }))
+
 export const FormView = () => {
     const answers = useAnswersStore(state => state.getAnswers())
+    const [interestsOptionsProps, setInterestsOptionsProps] = useState<
+        Array<InterestsOptionsProps>
+    >([])
 
     const {
         control,
@@ -19,16 +50,39 @@ export const FormView = () => {
     } = useForm({
         mode: 'onChange',
         resolver: yupResolver(validationSchema),
+        defaultValues: {
+            age: answers.age,
+            name: answers.name,
+            mail: answers.mail,
+            interests: apiToOptionsConverter(answers.interests),
+        },
     })
 
     const updateAnswersMutation = useUpdateAnswers()
+
+    useEffect(() => {
+        setInterestsOptionsProps(apiToOptionsConverter(answers.interests))
+    }, [answers.interests])
+
+    const onChangeInterests = (
+        values: Array<InterestId & Partial<InterestAttrs>>,
+    ) => {
+        setInterestsOptionsProps(
+            values.map(elm => ({
+                id: elm.id,
+                label: elm?.label ?? '',
+                checked: elm?.checked ?? false,
+            })),
+        )
+        return values
+    }
 
     const onSubmit = handleSubmit(formData => {
         updateAnswersMutation.mutate({
             name: formData.name,
             mail: formData.mail,
             age: formData.age,
-            interests: [],
+            interests: optionsToApiConverter(formData.interests),
         })
     })
 
@@ -93,12 +147,21 @@ export const FormView = () => {
                     CheckboxGroup's options. This could be detrimental
                     to your final assessment.
                 */}
-                {/* <Controller
-                    render={() => (
+                <Controller
+                    name="interests"
+                    control={control}
+                    render={({ field: { onChange } }) => (
                         <CheckboxGroup
+                            label="Interests"
+                            helperText={errors.interests?.message}
+                            error={Boolean(errors.interests?.message)}
+                            options={interestsOptionsProps}
+                            onChange={value => {
+                                onChange(onChangeInterests(value))
+                            }}
                         />
                     )}
-                /> */}
+                />
                 <Button
                     variant="contained"
                     disabled={!isValid}
