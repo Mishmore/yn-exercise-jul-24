@@ -2,6 +2,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import {
     Box,
+    CircularProgress,
     Container,
     IconButton,
     Paper,
@@ -13,6 +14,7 @@ import {
     TableRow,
     styled,
 } from '@mui/material'
+import { green } from '@mui/material/colors'
 import React from 'react'
 import { Link } from 'react-router-dom'
 
@@ -78,9 +80,27 @@ export const TableView: React.FC = () => {
                     </IconButton>
                 </Link>
 
-                <IconButton aria-label="delete" onClick={onClickDelete}>
-                    <DeleteIcon />
-                </IconButton>
+                <Box sx={{ position: 'relative' }}>
+                    <IconButton
+                        aria-label="delete"
+                        onClick={onClickDelete}
+                        disabled={resetAnswersMutation.isLoading}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                    {resetAnswersMutation.isLoading && (
+                        <CircularProgress
+                            sx={{
+                                size: 40,
+                                color: green[500],
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                zIndex: 1,
+                            }}
+                        />
+                    )}
+                </Box>
             </Box>
 
             <TableContainer component={Paper} sx={{ width: '100%' }}>

@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, CircularProgress, TextField } from '@mui/material'
+import { green } from '@mui/material/colors'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -162,13 +163,29 @@ export const FormView = () => {
                         />
                     )}
                 />
-                <Button
-                    variant="contained"
-                    disabled={!isValid}
-                    onClick={onSubmit}
-                >
-                    Submit
-                </Button>
+                <Box sx={{ position: 'relative' }}>
+                    <Button
+                        variant="contained"
+                        disabled={!isValid || updateAnswersMutation.isLoading}
+                        onClick={onSubmit}
+                        fullWidth
+                    >
+                        Submit
+                    </Button>
+                    {updateAnswersMutation.isLoading && (
+                        <CircularProgress
+                            size={24}
+                            sx={{
+                                color: green[500],
+                                position: 'absolute',
+                                top: '50%',
+                                left: '50%',
+                                marginTop: '-12px',
+                                marginLeft: '-12px',
+                            }}
+                        />
+                    )}
+                </Box>
             </Box>
         </div>
     )
