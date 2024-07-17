@@ -1,5 +1,11 @@
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Box, Button, CircularProgress, TextField } from '@mui/material'
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Container,
+    TextField,
+} from '@mui/material'
 import { green } from '@mui/material/colors'
 import React, { useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -88,11 +94,14 @@ export const FormView = () => {
     })
 
     return (
-        <div id="form-view">
+        <Container id="form-view" sx={{ width: { xs: '100%', md: '300px' } }}>
             <Box
                 display="flex"
                 gap={4}
-                sx={{ flexDirection: 'column', width: '300px' }}
+                sx={{
+                    flexDirection: 'column',
+                    width: '100%',
+                }}
             >
                 <Controller
                     name="name"
@@ -187,6 +196,6 @@ export const FormView = () => {
                     )}
                 </Box>
             </Box>
-        </div>
+        </Container>
     )
 }

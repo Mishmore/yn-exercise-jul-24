@@ -1,6 +1,13 @@
-import { Box } from '@mui/material'
+import {
+    BottomNavigation,
+    BottomNavigationAction,
+    Box,
+    Paper,
+    useTheme,
+} from '@mui/material'
+import useMediaQuery from '@mui/material/useMediaQuery'
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 
 import { AppRoutes } from '../domain/routes'
 
@@ -46,20 +53,61 @@ type SideMenuProps = {
 export const SideMenu: React.FC<SideMenuProps> = ({ children, routes }) => {
     const navigate = useNavigate()
 
+    const theme = useTheme()
+    const isDesktop = useMediaQuery(theme.breakpoints.up('md'))
+
     React.useEffect(() => {
         navigate(routes.FORM)
     }, [])
 
     return (
         <Box sx={layoutStyles}>
-            <Box sx={sideMenuStyles}>
-                <Link to={routes.FORM} style={linkStyles}>
-                    Form
-                </Link>
-                <Link to={routes.TABLE} style={linkStyles}>
-                    Table
-                </Link>
-            </Box>
+            {isDesktop ? (
+                <Box sx={sideMenuStyles}>
+                    <Link to={routes.FORM} style={linkStyles}>
+                        Form
+                    </Link>
+                    <Link to={routes.TABLE} style={linkStyles}>
+                        Table
+                    </Link>
+                </Box>
+            ) : (
+                <Paper
+                    sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                    }}
+                    elevation={3}
+                >
+                    <BottomNavigation showLabels>
+                        <BottomNavigationAction
+                            component={NavLink}
+                            to={routes.FORM}
+                            label="Form"
+                            sx={{
+                                '&.active': {
+                                    fontWeight: 'bold',
+                                    color: '#DD1E3E',
+                                },
+                            }}
+                        />
+
+                        <BottomNavigationAction
+                            component={NavLink}
+                            to={routes.TABLE}
+                            label="Table"
+                            sx={{
+                                '&.active': {
+                                    fontWeight: 'bold',
+                                    color: '#DD1E3E',
+                                },
+                            }}
+                        />
+                    </BottomNavigation>
+                </Paper>
+            )}
             <Box sx={contentStyles}>{children}</Box>
         </Box>
     )
