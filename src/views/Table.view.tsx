@@ -16,6 +16,7 @@ import {
 import React from 'react'
 import { Link } from 'react-router-dom'
 
+import { useResetAnswers } from '../api-hooks/useResetAnswers'
 import { APP_ROUTES } from '../domain/routes'
 import { useAnswersStore } from '../state'
 
@@ -62,6 +63,12 @@ export const TableView: React.FC = () => {
 
     const rows = Object.entries({ ...answers, interests })
 
+    const resetAnswersMutation = useResetAnswers()
+
+    const onClickDelete = () => {
+        resetAnswersMutation.mutate()
+    }
+
     return (
         <TableViewWrapper id="table-view">
             <Box sx={buttonsMenuStyles}>
@@ -70,7 +77,8 @@ export const TableView: React.FC = () => {
                         <EditIcon />
                     </IconButton>
                 </Link>
-                <IconButton aria-label="delete">
+
+                <IconButton aria-label="delete" onClick={onClickDelete}>
                     <DeleteIcon />
                 </IconButton>
             </Box>
